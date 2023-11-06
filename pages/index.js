@@ -76,7 +76,7 @@ const Home = () => {
             {!apiOutput && (
               <h2>
                 Beantworte 3 Fragen zu deiner Persönlichkeit und du erhältst
-                kostenlos eine persönliche Empfehlung, was dein passender Weg nach
+                kostenlos eine persönliche Empfehlung, was dein passender Studiengang nach
                 dem Abitur sein kann!
               </h2>
             )}
