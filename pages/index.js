@@ -54,7 +54,7 @@ const Home = () => {
               <h1>Was tun nach dem Abitur?</h1>
             )}
             {apiOutput && (
-              <><h1>Dein Ergebnis</h1><h3>Das ist nur eine grobe Antwort die eine KI für dich generiert hat. Melde dich jetzt bei curio-lerning.com an und wir beantworten deine Fragen persönlich und finden deinen passenden Weg gemeinsam!</h3></>
+              <h1>Dein Ergebnis</h1>
             )}
           </div>
             <div className="header-subtitle center-text">
@@ -63,6 +63,14 @@ const Home = () => {
                 Beantworte 3 Fragen zu deiner Persönlichkeit und du erhältst
                 kostenlos eine persönliche Empfehlung, was dein passender Weg nach
                 dem Abitur sein kann!
+              </h2>
+            )}
+            </div>
+            <div className="header-subtitle center-text">
+            {apiOutput && (
+              <h2>
+                Das ist nur eine grobe Antwort die eine KI für dich generiert hat. 
+                Melde dich jetzt bei curio-lerning.com an und wir beantworten deine Fragen persönlich und kostenlos!
               </h2>
             )}
             </div>
