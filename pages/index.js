@@ -7,7 +7,7 @@ const Home = () => {
   const questionList = [
     "Frage 1:  Welche Fächer begeistern dich in der Schule am meisten?",
     "Frage 2:  Welche Bereiche findest du spannend? (z.B. Medizin, Wirtschaft, Technik, etc.)?",
-    "Frage 3:  Wie wichtig ist es dir, dass du nach deinem Studium viele unterschiedliche Berufsmöglichkeiten hast? Oder würdest du lieber ein Studium machen, das dich auf einen bestimmten Beruf vorbereitet?",
+    "Frage 3:  Wie wichtig ist es dir, dass du nach deinem Studium viele unterschiedliche Berufsmöglichkeiten hast? Oder würdest du lieber ein Studium machen, das dich auf einen bestimmten Beruf vorbereitet? (z.B. Lehramt)",
   ];
   const totalQuestions = questionList.length;
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -54,7 +54,7 @@ const Home = () => {
               <h1>Was tun nach dem Abitur?</h1>
             )}
             {apiOutput && (
-              <h1>Dein Ergebnis</h1>
+              <><h1>Dein Ergebnis</h1><h3>Das ist nur eine grobe Antwort die eine KI für dich generiert hat. Melde dich jetzt bei curio-lerning.com an und wir beantworten deine Fragen persönlich und finden deinen passenden Weg gemeinsam!</h3></>
             )}
           </div>
             <div className="header-subtitle center-text">
