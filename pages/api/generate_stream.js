@@ -2,7 +2,7 @@ import { StreamingTextResponse, LangChainStream } from 'ai';
 import { OpenAI } from 'langchain/llms/openai';
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
-import { CallbackHandler } from "langfuse-langchain";
+import { CallbackHandler, Langfuse } from "langfuse-langchain";
 
 export const runtime = 'edge';
 
@@ -27,10 +27,15 @@ const generateAction = async (req) => {
 
   console.log(`user answers: ${answers}`);
 
-  const langfuse_handlers = new CallbackHandler({
+  // configure the normal Langchain sdk
+  const langfuse = new Langfuse({
     publicKey: process.env.LF_PUBLIC_KEY,
     secretKey: process.env.LF_SECRET_KEY,
   });
+
+  // create a trace and a handler nested into the trace.
+  const trace = langfuse.trace({ name: "recommendation-response", metadata: { user_answers: answers } });
+  const langfuse_handlers = new CallbackHandler({ root: trace });
 
 
   const model = new OpenAI({
