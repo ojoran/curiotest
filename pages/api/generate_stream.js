@@ -1,9 +1,10 @@
+import { StreamingTextResponse, LangChainStream } from 'ai';
+import { OpenAI } from 'langchain/llms/openai';
 import { LLMChain } from "langchain/chains";
-import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
-
 import { CallbackHandler } from "langfuse-langchain";
 
+export const runtime = 'edge';
 
 const promptTemplate = `Du bist ein Assistent bei der Studiengangfindung für Schüler. 
   Antworte bitte in Stichpunkten und bleibe bei Du. 
@@ -18,46 +19,43 @@ const promptTemplate = `Du bist ein Assistent bei der Studiengangfindung für Sc
   Frage 3:  Wie wichtig ist es dir, dass du nach deinem Studium viele unterschiedliche Berufsmöglichkeiten hast? Oder würdest du lieber ein Studium machen, das dich auf einen bestimmten Beruf vorbereitet?\n
   Antwort 3: {answer_3}\n`;
 
+const generateAction = async (req) => {
 
-const generateAction = async (req, res) => {
-  const answers = req.body.userInput;
+  const { userInput } = await req.json();
+  const answers = userInput;
+  const { stream, handlers, writer } = LangChainStream();
 
   console.log(`user answers: ${answers}`);
-  console.log(`promptTemplate: ${promptTemplate}`);
 
-  // create a handler
-  const langfuseHandler = new CallbackHandler({
+  const langfuse_handlers = new CallbackHandler({
     publicKey: process.env.LF_PUBLIC_KEY,
     secretKey: process.env.LF_SECRET_KEY,
   });
 
-  // create a model
+
   const model = new OpenAI({
-    temperature: 0,
+    streaming: true,
+    modelName: "gpt-4",
     openAIApiKey: process.env.OPENAI_API_KEY,
-    modelName: "gpt-4"
   });
+
+
   // create a prompt
   const prompt = PromptTemplate.fromTemplate(promptTemplate);
   // create a chain
   const chain = new LLMChain({
     llm: model,
     prompt,
-    callbacks: [langfuseHandler],
+    callbacks: [langfuse_handlers],
   });
 
-  // execute the chain
-  const result = await chain.call(
+  chain.call(
     { answer_1: answers[0], answer_2: answers[1], answer_3: answers[2] },
-    { callbacks: [langfuseHandler] }
-  );
+    { callbacks: [handlers, langfuse_handlers] }
+  ).catch(console.error)
 
-  const resultText = result["text"];
+  return new StreamingTextResponse(stream);
+}
 
-  console.log(`result: ${resultText}`);
-
-  res.status(200).json({ output: resultText });
-
-};
 
 export default generateAction;
