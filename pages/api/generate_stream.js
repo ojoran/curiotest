@@ -19,10 +19,13 @@ const promptTemplate = `Du bist ein Assistent bei der Studiengangfindung für Sc
   Frage 3:  Wie wichtig ist es dir, dass du nach deinem Studium viele unterschiedliche Berufsmöglichkeiten hast? Oder würdest du lieber ein Studium machen, das dich auf einen bestimmten Beruf vorbereitet?\n
   Antwort 3: {answer_3}\n`;
 
-export async function POST(req: Request) {
+const generateAction = async (req) => {
 
-  const { answers } = await req.json();
+  const { userInput } = await req.json();
+  const answers = userInput;
   const { stream, handlers, writer } = LangChainStream();
+
+  console.log(`user answers: ${answers}`);
 
   const langfuse_handlers = new CallbackHandler({
     publicKey: process.env.LF_PUBLIC_KEY,
@@ -53,3 +56,6 @@ export async function POST(req: Request) {
 
   return new StreamingTextResponse(stream);
 }
+
+
+export default generateAction;

@@ -31,11 +31,26 @@ const Home = () => {
       body: JSON.stringify({ userInput: answers }),
     });
 
-    const data = await response.json();
-    const { output } = data;
-    console.log("OpenAI replied...", output);
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-    setApiOutput(output);
+    console.log("OpenAI started replying ...");
+
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setApiOutput((prev) => prev + chunkValue);
+    }
     setIsGenerating(false);
   };
 
@@ -57,7 +72,7 @@ const Home = () => {
               <h1>Dein Ergebnis</h1>
             )}
           </div>
-            <div className="header-subtitle center-text">
+          <div className="header-subtitle center-text">
             {!apiOutput && (
               <h2>
                 Beantworte 3 Fragen zu deiner Persönlichkeit und du erhältst
@@ -65,15 +80,15 @@ const Home = () => {
                 dem Abitur sein kann!
               </h2>
             )}
-            </div>
-            <div className="header-subtitle center-text">
+          </div>
+          <div className="header-subtitle center-text">
             {apiOutput && (
               <h2>
-                Das ist nur eine grobe Antwort die eine KI für dich generiert hat. 
+                Das ist nur eine grobe Antwort die eine KI für dich generiert hat.
                 Melde dich jetzt bei curio-lerning.com an und wir beantworten deine Fragen persönlich und kostenlos!
               </h2>
             )}
-            </div>
+          </div>
         </div>
         {!apiOutput && (
           <div className="prompt-container">
